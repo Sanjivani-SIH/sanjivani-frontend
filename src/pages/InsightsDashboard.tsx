@@ -1,11 +1,153 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { BarChart, TrendingUp, Users, Clock, MapPin, Download, Filter } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
+import L from 'leaflet';
+import 'leaflet/dist/leaflet.css';
 
 export const InsightsDashboard: React.FC = () => {
   const { t } = useLanguage();
   const [selectedTimeframe, setSelectedTimeframe] = useState('12months');
   const [selectedState, setSelectedState] = useState('all');
+  const mapRef = useRef<L.Map | null>(null);
+  
+  // Sample GeoJSON data for states with coverage data
+  const statesGeoJSON = {
+    type: "FeatureCollection",
+    features: [
+      {
+        type: "Feature",
+        properties: { 
+          name: "Madhya Pradesh", 
+          coverage: 66,
+          claims: 12450,
+          verified: 9830,
+          granted: 8200
+        },
+        geometry: {
+          type: "Polygon",
+          coordinates: [[[76.0, 21.0], [76.0, 26.0], [82.0, 26.0], [82.0, 21.0], [76.0, 21.0]]]
+        }
+      },
+      {
+        type: "Feature",
+        properties: { 
+          name: "Odisha", 
+          coverage: 66,
+          claims: 8750,
+          verified: 7100,
+          granted: 5800
+        },
+        geometry: {
+          type: "Polygon",
+          coordinates: [[[82.0, 18.0], [82.0, 22.0], [87.0, 22.0], [87.0, 18.0], [82.0, 18.0]]]
+        }
+      },
+      {
+        type: "Feature",
+        properties: { 
+          name: "Telangana", 
+          coverage: 63,
+          claims: 6800,
+          verified: 5200,
+          granted: 4300
+        },
+        geometry: {
+          type: "Polygon",
+          coordinates: [[[77.0, 16.0], [77.0, 20.0], [81.0, 20.0], [81.0, 16.0], [77.0, 16.0]]]
+        }
+      },
+      {
+        type: "Feature",
+        properties: { 
+          name: "Tripura", 
+          coverage: 67,
+          claims: 3200,
+          verified: 2600,
+          granted: 2150
+        },
+        geometry: {
+          type: "Polygon",
+          coordinates: [[[91.0, 22.5], [91.0, 24.5], [92.5, 24.5], [92.5, 22.5], [91.0, 22.5]]]
+        }
+      }
+    ]
+  };
+
+  // Initialize map when component mounts
+  useEffect(() => {
+    // Fix for Leaflet icon issue
+    delete (L.Icon.Default.prototype as any)._getIconUrl;
+    L.Icon.Default.mergeOptions({
+      iconRetinaUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon-2x.png',
+      iconUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon.png',
+      shadowUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png',
+    });
+
+    // Initialize map if it doesn't exist yet
+    if (!mapRef.current) {
+      const map = L.map('coverage-map', {
+        center: [22.5, 82], // Center of India
+        zoom: 5,
+        zoomControl: false
+      });
+
+      // Add OpenStreetMap base layer
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap contributors'
+      }).addTo(map);
+
+      // Add GeoJSON layer with styling based on coverage
+      const geojsonLayer = L.geoJSON(statesGeoJSON as any, {
+        style: (feature) => {
+          const coverage = feature?.properties?.coverage || 0;
+          let fillColor = '#f8d3d3'; // 0-25%
+          
+          if (coverage > 75) {
+            fillColor = '#78c679'; // 75-100%
+          } else if (coverage > 50) {
+            fillColor = '#c2e699'; // 50-75%
+          } else if (coverage > 25) {
+            fillColor = '#ffffb2'; // 25-50%
+          }
+          
+          return {
+            fillColor: fillColor,
+            weight: 1,
+            opacity: 1,
+            color: 'white',
+            fillOpacity: 0.7
+          };
+        },
+        onEachFeature: (feature, layer) => {
+          if (feature.properties) {
+            layer.bindPopup(`
+              <div class="font-semibold">${feature.properties.name}</div>
+              <div>Coverage: ${feature.properties.coverage}%</div>
+              <div>Claims: ${feature.properties.claims}</div>
+              <div>Verified: ${feature.properties.verified}</div>
+              <div>Granted: ${feature.properties.granted}</div>
+            `);
+          }
+        }
+      }).addTo(map);
+
+      // Add zoom control to top-right
+      L.control.zoom({
+        position: 'topright'
+      }).addTo(map);
+
+      // Save map instance to ref
+      mapRef.current = map;
+    }
+
+    // Cleanup function
+    return () => {
+      if (mapRef.current) {
+        mapRef.current.remove();
+        mapRef.current = null;
+      }
+    };
+  }, []);
 
   const kpis = [
     {
@@ -221,13 +363,7 @@ export const InsightsDashboard: React.FC = () => {
           <section>
             <div className="bg-white rounded-lg shadow-md p-6">
               <h3 className="text-lg font-semibold text-gray-800 mb-4">Coverage by Village/Tehsil</h3>
-              <div className="h-80 bg-gradient-to-br from-green-50 to-blue-50 rounded flex items-center justify-center">
-                <div className="text-center text-gray-500">
-                  <MapPin className="w-12 h-12 mx-auto mb-2" />
-                  <div className="text-sm">Choropleth Map Placeholder</div>
-                  <div className="text-xs mt-1">Village-level coverage visualization would be displayed here</div>
-                </div>
-              </div>
+              <div id="coverage-map" className="h-80 rounded" style={{ width: '100%' }}></div>
               <div className="mt-4 flex justify-between items-center">
                 <div className="flex items-center space-x-4 text-sm">
                   <div className="flex items-center space-x-2">
@@ -247,12 +383,16 @@ export const InsightsDashboard: React.FC = () => {
                     <span>75-100%</span>
                   </div>
                 </div>
-                <select className="px-3 py-1 border border-gray-300 rounded text-sm">
-                  <option>All States</option>
-                  <option>Madhya Pradesh</option>
-                  <option>Odisha</option>
-                  <option>Telangana</option>
-                  <option>Tripura</option>
+                <select 
+                  className="px-3 py-1 border border-gray-300 rounded text-sm"
+                  value={selectedState}
+                  onChange={(e) => setSelectedState(e.target.value)}
+                >
+                  <option value="all">All States</option>
+                  <option value="mp">Madhya Pradesh</option>
+                  <option value="od">Odisha</option>
+                  <option value="tg">Telangana</option>
+                  <option value="tr">Tripura</option>
                 </select>
               </div>
             </div>

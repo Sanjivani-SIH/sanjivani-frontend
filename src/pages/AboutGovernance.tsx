@@ -8,25 +8,25 @@ export const AboutGovernance: React.FC = () => {
 
   const steeringCommittee = [
     {
-      name: 'Shri Arjun Munda',
+      name: 'Shri Jual Oram',
       position: 'Hon\'ble Minister of Tribal Affairs',
       role: 'Chairman',
       image: '/placeholder-official.jpg'
     },
     {
-      name: 'Dr. Anil Joshi',
+      name: 'Shri Shiv Pratap Shukla',
       position: 'Secretary, Ministry of Tribal Affairs',
       role: 'Vice Chairman',
       image: '/placeholder-official.jpg'
     },
     {
-      name: 'Ms. Priya Sharma',
+      name: 'Ms. Ananya Das',
       position: 'Joint Secretary (FRA), MoTA',
       role: 'Member Secretary',
       image: '/placeholder-official.jpg'
     },
     {
-      name: 'Dr. Rajesh Kumar',
+      name: 'Dr. Vikram Singh',
       position: 'Director, National Informatics Centre',
       role: 'Technical Advisor',
       image: '/placeholder-official.jpg'
@@ -36,25 +36,25 @@ export const AboutGovernance: React.FC = () => {
   const implementationTeam = [
     {
       state: 'Madhya Pradesh',
-      nodal: 'Shri Ram Prasad Verma',
+      nodal: 'Shri Rajesh Patel',
       designation: 'Commissioner, Tribal Development',
       contact: 'fra.mp@tribal.gov.in'
     },
     {
       state: 'Odisha',
-      nodal: 'Dr. Sunita Panda',
+      nodal: 'Dr. Meenakshi Rout',
       designation: 'Director, SC & ST Development',
       contact: 'fra.odisha@tribal.gov.in'
     },
     {
       state: 'Telangana',
-      nodal: 'Shri Venkat Rao',
+      nodal: 'Shri Krishna Reddy',
       designation: 'Secretary, Tribal Welfare',
       contact: 'fra.telangana@tribal.gov.in'
     },
     {
       state: 'Tripura',
-      nodal: 'Ms. Anjali Deb',
+      nodal: 'Ms. Soma Dasgupta',
       designation: 'Director, Tribal Research Institute',
       contact: 'fra.tripura@tribal.gov.in'
     }
@@ -63,67 +63,53 @@ export const AboutGovernance: React.FC = () => {
   const roadmapPhases = [
     {
       phase: 'Phase 1',
-      period: 'Apr 2023 - Mar 2024',
-      status: 'Completed',
+      period: 'Sep 2024 - Oct 2024',
+      status: 'In Progress',
       objectives: [
-        'Pilot implementation in 2 states (MP, Tripura)',
-        'DocFlow OCR-NER development and testing',
-        'Basic WebGIS atlas deployment',
-        'Initial data digitization (50,000+ documents)'
+        'Core architecture development',
+        'Basic WebGIS mapping infrastructure',
+        'Initial OCR-NER model development',
+        'Database design and setup'
       ],
       achievements: [
-        '✓ 85% reduction in document processing time',
-        '✓ 99.2% OCR accuracy achieved',
-        '✓ 2,500 villages mapped',
-        '✓ 150+ officials trained'
+        '◐ 80% complete - Core architecture',
+        '◐ 70% complete - WebGIS infrastructure',
+        '◐ 60% complete - OCR-NER models',
+        '◐ 90% complete - Database setup'
       ]
     },
     {
       phase: 'Phase 2',
-      period: 'Apr 2024 - Mar 2025',
-      status: 'In Progress',
+      period: 'Oct 2024 - Nov 2024',
+      status: 'Planned',
       objectives: [
-        'Expand to Odisha and Telangana',
-        'AssetSense remote sensing integration',
-        'DSS Prism decision support rollout',
-        'Advanced analytics and reporting'
+        'Alpha release with basic features',
+        'Document processing workflow',
+        'User authentication and roles',
+        'Basic analytics dashboard'
       ],
       achievements: [
-        '◐ 60% complete - Odisha integration',
-        '◐ 45% complete - Telangana pilot',
-        '◐ 75% complete - Remote sensing module',
-        '○ Planning - Full DSS deployment'
+        '○ In Progress - Alpha release preparation',
+        '○ Framework design - Document workflow',
+        '○ Implementation - Authentication system',
+        '○ Development - Analytics dashboard'
       ]
     },
     {
       phase: 'Phase 3',
-      period: 'Apr 2025 - Mar 2026',
+      period: 'Nov 2024',
       status: 'Planned',
       objectives: [
-        'Scale to 10+ states nationwide',
-        'Mobile app for field officers',
-        'Blockchain for title verification',
-        'AI-powered fraud detection'
+        'Final system integration',
+        'Comprehensive testing and QA',
+        'Performance optimization',
+        'Documentation and deployment'
       ],
       achievements: [
-        'Planning state-wise rollout strategy',
-        'Technology roadmap finalization',
-        'Stakeholder engagement in progress'
-      ]
-    },
-    {
-      phase: 'Phase 4',
-      period: 'Apr 2026 - Mar 2027',
-      status: 'Planned',
-      objectives: [
-        'Complete national coverage',
-        'Integration with other tribal schemes',
-        'Real-time monitoring dashboard',
-        'Predictive analytics for policy'
-      ],
-      achievements: [
-        'Framework design in progress',
-        'Inter-ministerial coordination initiated'
+        '○ Planned - System integration phase',
+        '○ Planned - Testing and quality assurance',
+        '○ Planned - Performance optimization',
+        '○ Planned - Documentation finalization'
       ]
     }
   ];
@@ -175,7 +161,7 @@ export const AboutGovernance: React.FC = () => {
       {/* Section Navigation */}
       <div className="bg-white border-b">
         <div className="container mx-auto px-4">
-          <nav className="flex space-x-8">
+          <nav className="flex overflow-x-auto gap-2 border-b border-gray-200">
             {[
               { id: 'mission', label: 'Mission & Objectives' },
               { id: 'governance', label: 'Steering Committee' },
@@ -185,10 +171,10 @@ export const AboutGovernance: React.FC = () => {
               <button
                 key={section.id}
                 onClick={() => setActiveSection(section.id)}
-                className={`py-4 px-2 border-b-2 font-medium text-sm transition-colors ${
+                className={`py-4 px-4 whitespace-nowrap font-medium text-sm transition-all duration-200 ${
                   activeSection === section.id
-                    ? 'border-purple-500 text-purple-600'
-                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                    ? 'text-orange-600 border-b-2 border-orange-500'
+                    : 'text-gray-500 hover:border-b-2 hover:border-gray-300 hover:text-gray-700'
                 }`}
               >
                 {section.label}

@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight, Map, Brain, Satellite, Target, TrendingUp, Users, FileText } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
+import ReactMarkdown from 'react-markdown';
 
 export const Home: React.FC = () => {
   const { t } = useLanguage();
@@ -53,21 +54,43 @@ export const Home: React.FC = () => {
 
   const updates = [
     {
-      date: '2024-01-15',
-      title: 'Phase 2 Rollout Begins in Odisha and Telangana',
-      summary: 'Expanding DocFlow OCR-NER capabilities to two additional states...'
+      date: '2024-09-30',
+      title: 'Project Kickoff - Development Begins',
+      summary: 'Development started with core architecture setup, database design, and initial WebGIS mapping infrastructure...'
     },
     {
-      date: '2024-01-10',
-      title: 'New AssetSense Remote Sensing Features',
-      summary: 'Enhanced land use change detection with 30-meter resolution imagery...'
+      date: '2024-10-15',
+      title: 'Alpha Release - Basic Features Ready',
+      summary: 'First working prototype with basic claim visualization, OCR processing, and user authentication completed...'
     },
     {
-      date: '2024-01-05',
-      title: 'DSS Prism SchemeLink Integration Complete',
-      summary: 'All major centrally sponsored schemes now integrated for automated matching...'
+      date: '2024-11-10',
+      title: 'Beta Testing - Final Polish',
+      summary: 'Final testing phase with enhanced features, bug fixes, and performance optimization before launch...'
     }
   ];
+
+  const markdownTest = `
+# Welcome to Sanjivani AI Assistant
+
+This is a **test** of *markdown* rendering in our chat system.
+
+## Features
+- **Bold text** for emphasis
+- *Italic text* for style
+- \`inline code\` for technical terms
+- [Links](https://example.com) for references
+
+### Code Example
+\`\`\`javascript
+const greeting = "Hello, World!";
+console.log(greeting);
+\`\`\`
+
+> This is a blockquote for important information
+
+**The chat system now properly renders markdown!** 🎉
+  `;
 
   return (
     <div id="main-content" className="space-y-16">
@@ -243,6 +266,35 @@ export const Home: React.FC = () => {
               <span>{t('view.more')}</span>
               <ArrowRight className="w-4 h-4" />
             </Link>
+          </div>
+        </section>
+
+        {/* Markdown Test Section */}
+        <section>
+          <h2 className="text-3xl font-bold text-gray-800 mb-8 text-center">
+            Chat Markdown Rendering Test
+          </h2>
+          <div className="bg-white rounded-lg shadow-lg p-8">
+            <div className="prose prose-blue max-w-none">
+              <ReactMarkdown
+                components={{
+                  h1: ({ children }) => <h1 className="text-3xl font-bold text-gray-800 mb-4">{children}</h1>,
+                  h2: ({ children }) => <h2 className="text-2xl font-semibold text-gray-700 mb-3">{children}</h2>,
+                  h3: ({ children }) => <h3 className="text-xl font-semibold text-gray-700 mb-2">{children}</h3>,
+                  p: ({ children }) => <p className="text-gray-600 mb-4 leading-relaxed">{children}</p>,
+                  ul: ({ children }) => <ul className="list-disc list-inside space-y-2 mb-4 text-gray-600">{children}</ul>,
+                  li: ({ children }) => <li className="text-gray-600">{children}</li>,
+                  strong: ({ children }) => <strong className="font-bold text-gray-800">{children}</strong>,
+                  em: ({ children }) => <em className="italic text-gray-700">{children}</em>,
+                  code: ({ children }) => <code className="bg-gray-100 px-2 py-1 rounded text-sm font-mono text-red-600">{children}</code>,
+                  pre: ({ children }) => <pre className="bg-gray-900 text-green-400 p-4 rounded-lg overflow-x-auto mb-4">{children}</pre>,
+                  blockquote: ({ children }) => <blockquote className="border-l-4 border-blue-500 pl-4 italic text-gray-600 my-4">{children}</blockquote>,
+                  a: ({ children, href }) => <a href={href} className="text-blue-600 hover:text-blue-800 underline">{children}</a>
+                }}
+              >
+                {markdownTest}
+              </ReactMarkdown>
+            </div>
           </div>
         </section>
       </div>

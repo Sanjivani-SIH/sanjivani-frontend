@@ -28,7 +28,11 @@ apiClient.interceptors.response.use(
     if (error.response && error.response.status === 401) {
       localStorage.removeItem('token');
       localStorage.removeItem('user');
-      window.location.href = '/login';
+      // Only redirect if not already on login page to prevent infinite loops
+      const currentPath = window.location.pathname;
+      if (currentPath !== '/login' && currentPath !== '/google/callback') {
+        window.location.href = '/login';
+      }
     }
     return Promise.reject(error);
   }

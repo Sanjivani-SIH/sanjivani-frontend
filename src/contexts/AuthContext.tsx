@@ -47,6 +47,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   useEffect(() => {
     const checkAuth = async () => {
       try {
+        // Check if token exists before making API call
+        if (!authService.isLoggedIn()) {
+          setUser(null);
+          setIsLoading(false);
+          return;
+        }
+        
         // Try to get current user data
         const userData = await authService.getCurrentUser();
         setUser(userData);

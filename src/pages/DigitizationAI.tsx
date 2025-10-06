@@ -46,25 +46,25 @@ export const DigitizationAI: React.FC = () => {
 
   const modelCards = [
     {
-      name: 'OCR Model - Hindi/English',
-      accuracy: '99.2%',
-      dataset: 'Custom FRA document corpus (50k+ samples)',
-      limitations: 'Handwritten text accuracy 85%',
-      lastUpdated: '2024-01-10'
+      name: 'OCR Text Recognition',
+      accuracy: '92.5%',
+      dataset: 'Scanned FRA documents (5,000+ pages)',
+      limitations: 'Handwritten text may require manual review',
+      lastUpdated: '2024-10-25'
     },
     {
-      name: 'NER Model - Entity Extraction',
-      accuracy: '94.5%',
-      dataset: 'Labeled FRA entities (25k+ documents)',
-      limitations: 'Novel village names may require validation',
-      lastUpdated: '2024-01-05'
+      name: 'Named Entity Recognition',
+      accuracy: '87.3%',
+      dataset: 'FRA claims with manual annotations',
+      limitations: 'Village names with spelling variations',
+      lastUpdated: '2024-11-05'
     },
     {
       name: 'Land Use Classification',
-      accuracy: '91.8%',
+      accuracy: '89.8%',
       dataset: 'Satellite imagery (Sentinel-2, Landsat-8)',
       limitations: 'Cloud cover affects accuracy',
-      lastUpdated: '2023-12-20'
+      lastUpdated: '2024-10-15'
     }
   ];
 
@@ -142,7 +142,7 @@ export const DigitizationAI: React.FC = () => {
       {/* Tab Navigation */}
       <div className="bg-white border-b">
         <div className="container mx-auto px-4">
-          <nav className="flex space-x-8">
+          <nav className="flex overflow-x-auto gap-2 border-b border-gray-200">
             {[
               { id: 'docflow', label: 'DocFlow OCR-NER', icon: FileText },
               { id: 'standards', label: 'Data Standards', icon: CheckCircle },
@@ -153,10 +153,10 @@ export const DigitizationAI: React.FC = () => {
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
-                  className={`flex items-center space-x-2 py-4 px-2 border-b-2 font-medium text-sm transition-colors ${
+                  className={`flex items-center space-x-2 py-4 px-4 font-medium text-sm transition-all duration-200 whitespace-nowrap ${
                     activeTab === tab.id
-                      ? 'border-green-500 text-green-600'
-                      : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                      ? 'text-orange-600 border-b-2 border-orange-500'
+                      : 'text-gray-500 hover:text-gray-700 hover:border-b-2 hover:border-gray-300'
                   }`}
                 >
                   <IconComponent className="w-4 h-4" />
@@ -388,16 +388,16 @@ export const DigitizationAI: React.FC = () => {
                   </div>
                   <div className="space-y-2 text-sm">
                     <div className="flex justify-between">
-                      <span>Forest Gain (2023-2024):</span>
-                      <span className="font-medium text-green-600">+1,250 ha</span>
+                      <span>Forest Gain (2024):</span>
+                      <span className="font-medium text-green-600">+850 ha</span>
                     </div>
                     <div className="flex justify-between">
-                      <span>Forest Loss (2023-2024):</span>
-                      <span className="font-medium text-red-600">-890 ha</span>
+                      <span>Forest Loss (2024):</span>
+                      <span className="font-medium text-red-600">-420 ha</span>
                     </div>
                     <div className="flex justify-between">
                       <span>Net Change:</span>
-                      <span className="font-medium text-green-600">+360 ha</span>
+                      <span className="font-medium text-green-600">+430 ha</span>
                     </div>
                   </div>
                 </div>

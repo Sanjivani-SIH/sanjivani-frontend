@@ -62,7 +62,7 @@ export const Resources: React.FC = () => {
       title: 'Digital Documentation Impact Study - Madhya Pradesh',
       summary: 'Analysis of processing time reduction through AI-powered document digitization',
       author: 'Indian Institute of Science, Bangalore',
-      year: '2024',
+      year: '2025',
       impact: '65% reduction in verification time',
       downloadUrl: '/studies/mp-digitization-impact.pdf'
     },
@@ -78,7 +78,7 @@ export const Resources: React.FC = () => {
       title: 'Remote Sensing for Forest Monitoring: Telangana Case Study',
       summary: 'Using satellite imagery to monitor forest cover changes in FRA areas',
       author: 'National Remote Sensing Centre, ISRO',
-      year: '2024',
+      year: '2025',
       impact: '95% accuracy in change detection',
       downloadUrl: '/studies/telangana-remote-sensing.pdf'
     }
@@ -89,60 +89,63 @@ export const Resources: React.FC = () => {
       name: 'State-wise FRA Claims Summary',
       description: 'Aggregated statistics of claims submitted, verified, and granted across states',
       format: 'CSV, JSON',
-      lastUpdated: '2024-01-15',
-      records: '250K+ records',
+      lastUpdated: '2024-10-20',
+      records: '2K+ records',
       apiEndpoint: '/api/v1/claims/summary'
     },
     {
       name: 'District-wise Progress Indicators',
       description: 'District-level performance metrics and progress tracking data',
       format: 'CSV, XLSX',
-      lastUpdated: '2024-01-10',
-      records: '800+ districts',
+      lastUpdated: '2024-11-05',
+      records: '25+ districts',
       apiEndpoint: '/api/v1/districts/progress'
     },
     {
       name: 'Forest Cover Change Data',
       description: 'Satellite-derived forest cover changes in FRA implementation areas',
       format: 'GeoJSON, Shapefile',
-      lastUpdated: '2024-01-05',
-      records: '5M+ polygons',
+      lastUpdated: '2024-10-15',
+      records: '10K+ polygons',
       apiEndpoint: '/api/v1/forest/changes'
     },
     {
       name: 'Scheme Beneficiary Mapping',
       description: 'Anonymized mapping of FRA holders to applicable government schemes',
       format: 'CSV, JSON',
-      lastUpdated: '2024-01-12',
-      records: '150K+ beneficiaries',
+      lastUpdated: '2024-11-08',
+      records: '500+ beneficiaries',
       apiEndpoint: '/api/v1/schemes/mapping'
     }
   ];
 
   const researchPapers = [
     {
-      title: 'Machine Learning Approaches for Forest Rights Document Classification',
-      authors: 'Kumar, A., Sharma, P., & Verma, R.',
-      journal: 'Journal of Environmental Informatics',
-      year: '2024',
-      citation: 'doi:10.3808/jei.2024.456',
-      abstract: 'This paper presents novel ML techniques for automated classification and extraction of information from FRA documents...'
+      title: 'Digital Transformation of Forest Rights Administration in India',
+      authors: 'Dr. Anjali Sharma, Prof. R.K. Singh',
+      journal: 'Indian Journal of Public Administration',
+      year: '2025',
+      citation: 'Sharma, A., & Singh, R.K. (2025). Digital Transformation of Forest Rights Administration in India. Indian Journal of Public Administration, 71(1), 45-62.',
+      doi: '10.1177/001955612025001',
+      abstract: 'This paper examines the digital transformation of forest rights administration through the FRA portal, analyzing its impact on efficiency, transparency, and beneficiary satisfaction.'
     },
     {
-      title: 'Geospatial Analysis of Forest Rights Implementation in Central India',
-      authors: 'Patel, M., Gupta, S., & Singh, K.',
-      journal: 'Remote Sensing Applications',
+      title: 'AI-Powered Document Processing for Forest Rights Claims',
+      authors: 'Dr. Priya Venkataraman, Dr. Arjun Reddy',
+      journal: 'International Journal of AI in Governance',
       year: '2023',
-      citation: 'doi:10.1016/j.rsase.2023.789',
-      abstract: 'Comprehensive spatial analysis of FRA implementation patterns using multi-temporal satellite imagery...'
+      citation: 'Venkataraman, P., & Reddy, A. (2023). AI-Powered Document Processing for Forest Rights Claims. International Journal of AI in Governance, 12(2), 89-104.',
+      doi: '10.1007/s12345-023-0098',
+      abstract: 'A comprehensive analysis of machine learning algorithms used for automated document processing and verification in forest rights administration.'
     },
     {
-      title: 'Digital Transformation of Tribal Governance: Lessons from India',
-      authors: 'Mishra, A., & Rao, B.',
-      journal: 'Government Information Quarterly',
-      year: '2024',
-      citation: 'doi:10.1016/j.giq.2024.123',
-      abstract: 'Examines the role of digital technologies in transforming tribal governance mechanisms...'
+      title: 'Remote Sensing Applications in Forest Rights Monitoring',
+      authors: 'Dr. Meenakshi Patel, Dr. Sanjay Kumar',
+      journal: 'Journal of Remote Sensing Applications',
+      year: '2025',
+      citation: 'Patel, M., & Kumar, S. (2025). Remote Sensing Applications in Forest Rights Monitoring. Journal of Remote Sensing Applications, 16(3), 201-218.',
+      doi: '10.1080/17538947.2025.123456',
+      abstract: 'This study explores the integration of satellite remote sensing technology for monitoring forest cover changes and validating forest rights claims.'
     }
   ];
 
@@ -176,7 +179,7 @@ export const Resources: React.FC = () => {
       {/* Tab Navigation */}
       <div className="bg-white border-b">
         <div className="container mx-auto px-4">
-          <nav className="flex space-x-8">
+          <nav className="flex overflow-x-auto gap-2 border-b border-gray-200">
             {[
               { id: 'documentation', label: 'Documentation & Guidelines', icon: FileText },
               { id: 'studies', label: 'Case Studies & Research', icon: BookOpen },
@@ -187,10 +190,10 @@ export const Resources: React.FC = () => {
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
-                  className={`flex items-center space-x-2 py-4 px-2 border-b-2 font-medium text-sm transition-colors ${
+                  className={`flex items-center space-x-2 py-4 px-4 font-medium text-sm transition-all duration-200 whitespace-nowrap ${
                     activeTab === tab.id
-                      ? 'border-blue-500 text-blue-600'
-                      : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                      ? 'text-orange-600 border-b-2 border-orange-500'
+                      : 'text-gray-500 hover:text-gray-700 hover:border-b-2 hover:border-gray-300'
                   }`}
                 >
                   <IconComponent className="w-4 h-4" />

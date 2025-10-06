@@ -57,7 +57,7 @@ const translations: Record<string, Record<string, string>> = {
     'footer.rti': 'RTI',
     'footer.help': 'Help',
     'footer.faq': 'FAQ',
-    'footer.disclaimer': 'Maps and statistics on the public portal are indicative. Official records maintained by competent authorities shall prevail.',
+    'footer.disclaimer': 'This website is developed for the purpose of the SIH (Smart India Hackathon) demo submission. Maps and statistics on the public portal are indicative. Official records maintained by competent authorities shall prevail.',
     
     // Common
     'loading': 'Loading...',

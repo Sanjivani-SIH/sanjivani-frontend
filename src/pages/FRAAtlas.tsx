@@ -1,9 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Map, Layers, Filter, Download, Search, Info } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
+import L from 'leaflet';
+import 'leaflet/dist/leaflet.css';
 
 export const FRAAtlas: React.FC = () => {
   const { t } = useLanguage();
+  const mapRef = useRef<L.Map | null>(null);
   const [selectedFilters, setSelectedFilters] = useState({
     state: 'all',
     district: 'all',
@@ -11,6 +14,253 @@ export const FRAAtlas: React.FC = () => {
     status: 'all'
   });
   const [activePanel, setActivePanel] = useState('overview');
+  
+  // Sample GeoJSON data (will be replaced with API calls)
+  const sampleClaims = {
+    type: "FeatureCollection",
+    features: [
+      {
+        type: "Feature",
+        properties: {
+          id: 1,
+          claimType: "IFR",
+          status: "Approved",
+          area: 2.5,
+          village: "Dhamtari"
+        },
+        geometry: {
+          type: "Point",
+          coordinates: [81.5, 20.7]
+        }
+      },
+      {
+        type: "Feature",
+        properties: {
+          id: 2,
+          claimType: "CFR",
+          status: "Pending",
+          area: 15.8,
+          village: "Kondagaon"
+        },
+        geometry: {
+          type: "Polygon",
+          coordinates: [[[81.6, 20.8], [81.65, 20.8], [81.65, 20.85], [81.6, 20.85], [81.6, 20.8]]]
+        }
+      },
+      {
+        type: "Feature",
+        properties: {
+          id: 3,
+          claimType: "CR",
+          status: "Rejected",
+          area: 5.2,
+          village: "Bastar"
+        },
+        geometry: {
+          type: "Point",
+          coordinates: [81.7, 20.9]
+        }
+      }
+    ]
+  };
+
+  // Sample forest areas
+  const forestAreas = {
+    type: "FeatureCollection",
+    features: [
+      {
+        type: "Feature",
+        properties: {
+          id: 1,
+          name: "Kanger Valley National Park",
+          type: "Protected Forest"
+        },
+        geometry: {
+          type: "Polygon",
+          coordinates: [[[81.8, 20.6], [82.0, 20.6], [82.0, 20.8], [81.8, 20.8], [81.8, 20.6]]]
+        }
+      }
+    ]
+  };
+
+  // Sample village boundaries
+  const villageBoundaries = {
+    type: "FeatureCollection",
+    features: [
+      {
+        type: "Feature",
+        properties: {
+          id: 1,
+          name: "Dhamtari",
+          population: 14500
+        },
+        geometry: {
+          type: "Polygon",
+          coordinates: [[[81.45, 20.65], [81.55, 20.65], [81.55, 20.75], [81.45, 20.75], [81.45, 20.65]]]
+        }
+      },
+      {
+        type: "Feature",
+        properties: {
+          id: 2,
+          name: "Kondagaon",
+          population: 8700
+        },
+        geometry: {
+          type: "Polygon",
+          coordinates: [[[81.55, 20.75], [81.7, 20.75], [81.7, 20.9], [81.55, 20.9], [81.55, 20.75]]]
+        }
+      }
+    ]
+  };
+  
+  // Initialize map when component mounts
+  useEffect(() => {
+    // Fix for default marker icons in Leaflet
+    delete L.Icon.Default.prototype._getIconUrl;
+    L.Icon.Default.mergeOptions({
+      iconRetinaUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon-2x.png',
+      iconUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon.png',
+      shadowUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png',
+    });
+
+    // Initialize map if it doesn't exist
+    if (!mapRef.current) {
+      const map = L.map('map-container').setView([20.8, 81.6], 9);
+      
+      // Add base tile layer
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+      }).addTo(map);
+      
+      // Add satellite layer
+      const satelliteLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+        attribution: '&copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
+      });
+      
+      // Create layer groups for different data types
+      const claimsLayer = L.geoJSON(sampleClaims as any, {
+        style: (feature) => {
+          const claimType = feature?.properties?.claimType;
+          const status = feature?.properties?.status;
+          
+          let color = '#3388ff'; // Default blue
+          
+          if (claimType === 'IFR') color = '#1e40af'; // Blue
+          else if (claimType === 'CFR') color = '#15803d'; // Green
+          else if (claimType === 'CR') color = '#7e22ce'; // Purple
+          
+          if (status === 'Approved') return { color, fillColor: color, weight: 2, opacity: 1, fillOpacity: 0.5 };
+          if (status === 'Pending') return { color, fillColor: color, weight: 2, opacity: 0.7, fillOpacity: 0.3, dashArray: '5, 5' };
+          if (status === 'Rejected') return { color, fillColor: color, weight: 1, opacity: 0.5, fillOpacity: 0.1 };
+          
+          return { color, fillColor: color, weight: 2, opacity: 1, fillOpacity: 0.5 };
+        },
+        pointToLayer: (feature, latlng) => {
+          return L.circleMarker(latlng, {
+            radius: 8,
+            fillColor: feature.properties.claimType === 'IFR' ? '#1e40af' : 
+                      feature.properties.claimType === 'CFR' ? '#15803d' : '#7e22ce',
+            color: "#000",
+            weight: 1,
+            opacity: 1,
+            fillOpacity: 0.8
+          });
+        },
+        onEachFeature: (feature, layer) => {
+          if (feature.properties) {
+            const { claimType, status, area, village } = feature.properties;
+            layer.bindPopup(`
+              <div class="text-sm">
+                <div class="font-bold">${claimType} Claim</div>
+                <div>Status: ${status}</div>
+                <div>Area: ${area} hectares</div>
+                <div>Village: ${village}</div>
+              </div>
+            `);
+          }
+        }
+      }).addTo(map);
+      
+      const villagesLayer = L.geoJSON(villageBoundaries as any, {
+        style: {
+          color: '#d97706',
+          fillColor: '#d97706',
+          weight: 1,
+          opacity: 0.8,
+          fillOpacity: 0.1
+        },
+        onEachFeature: (feature, layer) => {
+          if (feature.properties) {
+            const { name, population } = feature.properties;
+            layer.bindPopup(`
+              <div class="text-sm">
+                <div class="font-bold">${name} Village</div>
+                <div>Population: ${population}</div>
+              </div>
+            `);
+          }
+        }
+      }).addTo(map);
+      
+      const forestLayer = L.geoJSON(forestAreas as any, {
+        style: {
+          color: '#047857',
+          fillColor: '#047857',
+          weight: 1,
+          opacity: 0.8,
+          fillOpacity: 0.2
+        },
+        onEachFeature: (feature, layer) => {
+          if (feature.properties) {
+            const { name, type } = feature.properties;
+            layer.bindPopup(`
+              <div class="text-sm">
+                <div class="font-bold">${name}</div>
+                <div>Type: ${type}</div>
+              </div>
+            `);
+          }
+        }
+      }).addTo(map);
+      
+      // Add layer control
+      const baseLayers = {
+        "OpenStreetMap": L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }),
+        "Satellite": satelliteLayer
+      };
+      
+      const overlays = {
+        "FRA Claims": claimsLayer,
+        "Village Boundaries": villagesLayer,
+        "Forest Areas": forestLayer
+      };
+      
+      L.control.layers(baseLayers, overlays).addTo(map);
+      
+      // Add zoom controls
+      document.getElementById('zoom-in')?.addEventListener('click', () => {
+        map.zoomIn();
+      });
+      
+      document.getElementById('zoom-out')?.addEventListener('click', () => {
+        map.zoomOut();
+      });
+      
+      // Store map reference
+      mapRef.current = map;
+    }
+    
+    // Cleanup function
+    return () => {
+      if (mapRef.current) {
+        mapRef.current.remove();
+        mapRef.current = null;
+      }
+    };
+  }, []);
 
   const filterOptions = {
     states: [
@@ -172,19 +422,14 @@ export const FRAAtlas: React.FC = () => {
           <div className="flex-1 space-y-6">
             {/* Map Container */}
             <div className="bg-white rounded-lg shadow-md overflow-hidden">
-              <div className="h-96 lg:h-[500px] bg-gradient-to-br from-green-50 to-blue-50 relative flex items-center justify-center">
-                <div className="text-center">
-                  <Map className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-                  <h3 className="text-lg font-semibold text-gray-600 mb-2">Interactive WebGIS Map</h3>
-                  <p className="text-sm text-gray-500 max-w-md">
-                    Real WebGIS implementation would integrate here using Leaflet/OpenLayers
-                    with OGC WMS/WMTS layers for IFR, CFR, and CR claims visualization
-                  </p>
+              <div className="h-96 lg:h-[500px] relative">
+                <div id="map-container" className="w-full h-full">
+                  {/* Map will be rendered here using useEffect */}
                 </div>
                 {/* Map controls */}
-                <div className="absolute top-4 right-4 space-y-2">
-                  <button className="w-10 h-10 bg-white shadow-md rounded flex items-center justify-center hover:bg-gray-50">+</button>
-                  <button className="w-10 h-10 bg-white shadow-md rounded flex items-center justify-center hover:bg-gray-50">-</button>
+                <div className="absolute top-4 right-4 space-y-2 z-[1000]">
+                  <button id="zoom-in" className="w-10 h-10 bg-white shadow-md rounded flex items-center justify-center hover:bg-gray-50">+</button>
+                  <button id="zoom-out" className="w-10 h-10 bg-white shadow-md rounded flex items-center justify-center hover:bg-gray-50">-</button>
                 </div>
               </div>
             </div>
